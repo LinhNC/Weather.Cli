@@ -1,6 +1,6 @@
 How to develop a .NET Command Line Interface (CLI) Tool using the new .NET 6 technology and build your own global tools to make your work easier.
 
-![CLI](https://linh.work/data/blog/create-your-own-net-cli-tool/thumb.jpg)
+![CLI](https://linh.work/data/blog/create-your-own-net-core-cli-tool/thumb.jpg)
 
 ### Built with
 
