@@ -1,0 +1,75 @@
+Index: Weather.Cli/WeatherService.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System.Net;\r\nusing System.Net.Http.Json;\r\nusing System.Text.Json.Serialization;\r\n\r\nnamespace Weather.Cli;\r\n\r\npublic static class WeatherService\r\n{\r\n    const string API_KEY = \"YOUR_API_KEY\";\r\n    public static async Task Run(string[] args)\r\n    {\r\n        var httpClient = new HttpClient()\r\n        {\r\n            BaseAddress = new Uri(\"https://api.openweathermap.org/\")\r\n        };\r\n        \r\n        var continuesCheck = true;\r\n        do\r\n        {\r\n            var city = args.AsQueryable().FirstOrDefault();\r\n            if (city == null)\r\n            {\r\n                Console.Write(\"Enter the city: \");\r\n                city = Console.ReadLine()!.Trim();\r\n            }\r\n\r\n            var response = await httpClient.GetAsync($\"data/2.5/weather?q={city}&appid={API_KEY}&units=metric\");\r\n            if (response.StatusCode == HttpStatusCode.NotFound)\r\n            {\r\n                Console.WriteLine($\"Weather not found for this city: {city}\");\r\n                continue;\r\n            }\r\n\r\n            var currentWeather = await response.Content.ReadFromJsonAsync<WeatherObject>();\r\n\r\n            Console.WriteLine($\"Current weather for city: {city}\");\r\n            \r\n            if (currentWeather != null)\r\n            {\r\n                Console.WriteLine($\"City: {currentWeather.Name}\");\r\n                Console.WriteLine($\"Country: {currentWeather.Sys?.Country}\");\r\n                Console.WriteLine($\"Weather: {currentWeather.Weather![0].Description}\");\r\n                Console.WriteLine($\"Temperature: {currentWeather.Main!.Temp}°C\");\r\n                Console.WriteLine($\"Humidity: {currentWeather.Main!.Humidity}%\");\r\n                Console.WriteLine($\"Pressure: {currentWeather.Main!.Pressure}hPa\");\r\n                Console.WriteLine($\"Wind: {currentWeather.Wind!.Speed}m/s, {currentWeather!.Wind!.Deg}°\");\r\n                Console.WriteLine($\"Clouds: {currentWeather.Clouds!.All}%\");\r\n            }\r\n            \r\n            Console.WriteLine($\"Continues to check the weather for another city? (Y/N)\");\r\n            \r\n            if (Console.ReadLine()!.Trim() != \"Y\")  continuesCheck = false;\r\n            \r\n        } while (continuesCheck);\r\n        \r\n    }\r\n}\r\n\r\npublic class Coord  \r\n{  \r\n    [JsonPropertyName(\"lon\")]\r\n    public double Lon { get; set; }  \r\n    [JsonPropertyName(\"lat\")]\r\n    public double Lat { get; set; }  \r\n}  \r\n  \r\npublic class Weather  \r\n{  \r\n    [JsonPropertyName(\"id\")]\r\n    public int Id { get; set; }  \r\n    [JsonPropertyName(\"main\")]\r\n    public string? Main { get; set; }  \r\n    [JsonPropertyName(\"description\")]\r\n    public string? Description { get; set; }  \r\n    [JsonPropertyName(\"icon\")]\r\n    public string? Icon { get; set; }  \r\n}  \r\n  \r\npublic class Main  \r\n{  \r\n    [JsonPropertyName(\"temp\")]\r\n    public double Temp { get; set; }  \r\n    [JsonPropertyName(\"feels_like\")]\r\n    public double FeelsLike { get; set; }  \r\n    [JsonPropertyName(\"temp_min\")]\r\n    public double TempMin { get; set; }  \r\n    [JsonPropertyName(\"temp_max\")]\r\n    public double TempMax { get; set; }  \r\n    [JsonPropertyName(\"pressure\")]\r\n    public double Pressure { get; set; }  \r\n    [JsonPropertyName(\"humidity\")]\r\n    public double Humidity { get; set; }  \r\n}  \r\n  \r\npublic class Wind  \r\n{  \r\n    [JsonPropertyName(\"speed\")]\r\n    public double Speed { get; set; }  \r\n    [JsonPropertyName(\"deg\")]\r\n    public int Deg { get; set; }  \r\n}  \r\n    \r\npublic class Clouds  \r\n{  \r\n    [JsonPropertyName(\"all\")]\r\n    public int All { get; set; }  \r\n}  \r\n  \r\npublic class Sys  \r\n{  \r\n    [JsonPropertyName(\"type\")]\r\n    public int Type { get; set; }  \r\n    [JsonPropertyName(\"id\")]\r\n    public int Id { get; set; }  \r\n    [JsonPropertyName(\"country\")]\r\n    public string? Country { get; set; }  \r\n    [JsonPropertyName(\"sunrise\")]\r\n    public int Sunrise { get; set; }  \r\n    [JsonPropertyName(\"sunset\")]\r\n    public int Sunset { get; set; }  \r\n}  \r\n  \r\npublic class WeatherObject  \r\n{  \r\n    [JsonPropertyName(\"coord\")]\r\n    public Coord? Coord { get; set; }  \r\n    [JsonPropertyName(\"weather\")]\r\n    public List<Weather>? Weather { get; set; }  \r\n    public string? @base { get; set; }  \r\n    [JsonPropertyName(\"main\")]\r\n    public Main? Main { get; set; }  \r\n    [JsonPropertyName(\"visibility\")]\r\n    public int? Visibility { get; set; }  \r\n    [JsonPropertyName(\"wind\")]\r\n    public Wind? Wind { get; set; }\r\n    [JsonPropertyName(\"clouds\")]\r\n    public Clouds? Clouds { get; set; }  \r\n    [JsonPropertyName(\"dt\")]\r\n    public int Dt { get; set; }  \r\n    [JsonPropertyName(\"sys\")]\r\n    public Sys? Sys { get; set; }  \r\n    [JsonPropertyName(\"timezone\")]\r\n    public int Timezone { get; set; }  \r\n    [JsonPropertyName(\"id\")]\r\n    public int Id { get; set; }  \r\n    [JsonPropertyName(\"name\")]\r\n    public string? Name { get; set; }  \r\n    [JsonPropertyName(\"cod\")]\r\n    public int Cod { get; set; }  \r\n}  \r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Weather.Cli/WeatherService.cs b/Weather.Cli/WeatherService.cs
+--- a/Weather.Cli/WeatherService.cs	(revision 50a83922638f6ec6f6fe27ccdc28620a17eebab7)
++++ b/Weather.Cli/WeatherService.cs	(date 1640157794736)
+@@ -33,7 +33,7 @@
+ 
+             var currentWeather = await response.Content.ReadFromJsonAsync<WeatherObject>();
+ 
+-            Console.WriteLine($"Current weather for city: {city}");
++            Console.WriteLine($"Current weather for city: {city} ");
+             
+             if (currentWeather != null)
+             {
+Index: .idea/.idea.Weather.Cli/.idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoGeneratedRunConfigurationManager\">\r\n    <projectFile>Weather.Cli/Weather.Cli.csproj</projectFile>\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"32da8999-a839-477b-99d2-848dba4abc9f\" name=\"Changes\" comment=\"\" />\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Rebase.Settings\">\r\n    <option name=\"NEW_BASE\" value=\"master\" />\r\n  </component>\r\n  <component name=\"HighlightingSettingsPerFile\">\r\n    <setting file=\"file://$PROJECT_DIR$/Weather.Cli/WeatherService.cs\" root0=\"FORCE_HIGHLIGHTING\" />\r\n    <setting file=\"file://$PROJECT_DIR$/Weather.Cli/Program.cs\" root0=\"FORCE_HIGHLIGHTING\" />\r\n    <setting file=\"mock://D:/WORK/Project/Weather.Cli/Weather.Cli/Program.cs\" root0=\"SKIP_HIGHLIGHTING\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"22aRfgkBC4zQILmgOZUg9mvkUex\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">\r\n    <property name=\"RunOnceActivity.OpenProjectViewOnStart\" value=\"true\" />\r\n    <property name=\"RunOnceActivity.ShowReadmeOnStart\" value=\"true\" />\r\n    <property name=\"WebServerToolWindowFactoryState\" value=\"false\" />\r\n    <property name=\"settings.editor.selected.configurable\" value=\"preferences.pluginManager\" />\r\n    <property name=\"vue.rearranger.settings.migration\" value=\"true\" />\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"Weather.Cli\" type=\"DotNetProject\" factoryName=\".NET Project\">\r\n      <option name=\"EXE_PATH\" value=\"\" />\r\n      <option name=\"PROGRAM_PARAMETERS\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\r\n      <option name=\"PASS_PARENT_ENVS\" value=\"1\" />\r\n      <option name=\"USE_EXTERNAL_CONSOLE\" value=\"0\" />\r\n      <option name=\"USE_MONO\" value=\"0\" />\r\n      <option name=\"RUNTIME_ARGUMENTS\" value=\"\" />\r\n      <option name=\"PROJECT_PATH\" value=\"$PROJECT_DIR$/Weather.Cli/Weather.Cli.csproj\" />\r\n      <option name=\"PROJECT_EXE_PATH_TRACKING\" value=\"1\" />\r\n      <option name=\"PROJECT_ARGUMENTS_TRACKING\" value=\"1\" />\r\n      <option name=\"PROJECT_WORKING_DIRECTORY_TRACKING\" value=\"1\" />\r\n      <option name=\"PROJECT_KIND\" value=\"DotNetCore\" />\r\n      <option name=\"PROJECT_TFM\" value=\"\" />\r\n      <method v=\"2\">\r\n        <option name=\"Build\" />\r\n      </method>\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"32da8999-a839-477b-99d2-848dba4abc9f\" name=\"Changes\" comment=\"\" />\r\n      <created>1640073820143</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1640073820143</updated>\r\n      <workItem from=\"1640073824372\" duration=\"3925000\" />\r\n      <workItem from=\"1640077836327\" duration=\"3877000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Add .ignore\">\r\n      <created>1640081331069</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1640081331069</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Remove\">\r\n      <created>1640081516084</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1640081516084</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Test\">\r\n      <created>1640081795119</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1640081795119</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"4\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"UnityCheckinConfiguration\" checkUnsavedScenes=\"true\" />\r\n  <component name=\"UnityProjectConfiguration\" hasMinimizedUI=\"false\" />\r\n  <component name=\"UnityUnitTestConfiguration\" currentTestLauncher=\"NUnit\" />\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <option name=\"CLEAR_INITIAL_COMMIT_MESSAGE\" value=\"true\" />\r\n    <MESSAGE value=\"Add .ignore\" />\r\n    <MESSAGE value=\"Remove\" />\r\n    <MESSAGE value=\"Test\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Test\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.idea.Weather.Cli/.idea/workspace.xml b/.idea/.idea.Weather.Cli/.idea/workspace.xml
+--- a/.idea/.idea.Weather.Cli/.idea/workspace.xml	(revision 50a83922638f6ec6f6fe27ccdc28620a17eebab7)
++++ b/.idea/.idea.Weather.Cli/.idea/workspace.xml	(date 1640157686645)
+@@ -4,7 +4,9 @@
+     <projectFile>Weather.Cli/Weather.Cli.csproj</projectFile>
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="32da8999-a839-477b-99d2-848dba4abc9f" name="Changes" comment="" />
++    <list default="true" id="32da8999-a839-477b-99d2-848dba4abc9f" name="Changes" comment="">
++      <change beforePath="$PROJECT_DIR$/.idea/.idea.Weather.Cli/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Weather.Cli/.idea/workspace.xml" afterDir="false" />
++    </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -13,10 +15,16 @@
+   <component name="Git.Rebase.Settings">
+     <option name="NEW_BASE" value="master" />
+   </component>
++  <component name="Git.Settings">
++    <option name="RECENT_BRANCH_BY_REPOSITORY">
++      <map>
++        <entry key="$PROJECT_DIR$" value="master" />
++      </map>
++    </option>
++  </component>
+   <component name="HighlightingSettingsPerFile">
+     <setting file="file://$PROJECT_DIR$/Weather.Cli/WeatherService.cs" root0="FORCE_HIGHLIGHTING" />
+     <setting file="file://$PROJECT_DIR$/Weather.Cli/Program.cs" root0="FORCE_HIGHLIGHTING" />
+-    <setting file="mock://D:/WORK/Project/Weather.Cli/Weather.Cli/Program.cs" root0="SKIP_HIGHLIGHTING" />
+   </component>
+   <component name="MarkdownSettingsMigration">
+     <option name="stateVersion" value="1" />
+@@ -31,7 +39,7 @@
+     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+     <property name="WebServerToolWindowFactoryState" value="false" />
+-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
++    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C#" />
+     <property name="vue.rearranger.settings.migration" value="true" />
+   </component>
+   <component name="RunManager">
+@@ -64,6 +72,7 @@
+       <updated>1640073820143</updated>
+       <workItem from="1640073824372" duration="3925000" />
+       <workItem from="1640077836327" duration="3877000" />
++      <workItem from="1640155228082" duration="1731000" />
+     </task>
+     <task id="LOCAL-00001" summary="Add .ignore">
+       <created>1640081331069</created>
