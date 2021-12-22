@@ -1,14 +1,14 @@
-##### Built with
+### Built with
 
 - .NET 6 Console App
 - DotNet Tool & nupkg
 
-##### Prerequisites
+### Prerequisites
 
 - Make sure you are running on the latest .NET 6 SDK (SDK 6.0 and above only).
 - Visual Studio 2022 or Rider 2021.3.1
 
-##### Create your own CLI
+### Create your own CLI
 
 On this example, we will create an .NET Core CLI tool use to check current weather data for a given city, you may need to register <b>[OpenWeatherMap's API](https://openweathermap.org/api)</b>.
 
@@ -84,7 +84,7 @@ Then we can able to config this console app as the nupkg tool by adding more the
 
 With this <ConsoleWindows text={"<ToolCommandName>weather</ToolCommandName>"} />, we configured the CLI will be execute by typing <b>weather</b> in the command line.
 
-###### Build the nupkg
+##### Build the nupkg
 
 ```shell
 dotnet pack
